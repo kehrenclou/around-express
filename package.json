@@ -1,0 +1,19 @@
+{
+  "name": "around-express",
+  "version": "1.0.0",
+  "description": "Practicum Around Express Project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kehrenclou/around-express.git"
+  },
+  "author": "Krista Ehrenclou",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kehrenclou/around-express/issues"
+  },
+  "homepage": "https://github.com/kehrenclou/around-express#readme"
+}
