@@ -9,7 +9,7 @@ const getDataFromFile = (pathToFile) => {
       //data is data from file...this is going to be for json files
 
       .then((data) => JSON.parse(data))
-      // .catch((err) => err)
+      // .catch((err) => err) //handled in controllers
   );
 
 };
