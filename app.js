@@ -1,5 +1,6 @@
 /* --------------------------------- imports -------------------------------- */
 const express = require('express');
+const helmet = require('helmet');
 const path = require('path');
 const usersRouter = require('./routes/users');
 const cardsRouter = require('./routes/cards');
@@ -10,6 +11,7 @@ const app = express();
 const { PORT = 3000 } = process.env;
 
 /* -------------------------------- app -------------------------------- */
+app.use(helmet());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', usersRouter);
