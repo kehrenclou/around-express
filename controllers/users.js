@@ -9,7 +9,7 @@ const dataPath = path.join(__dirname, '..', 'data', 'users.json');
 /* -------------------------------- functions ------------------------------- */
 const getUsers = (req, res) => getDataFromFile(dataPath)
   .then((users) => res.status(200).send(users))
-  .catch(() => res.status(404).send({ message: 'Request resource not found' }));
+  .catch(() => res.status(500).send({ message: 'An error has occurred on the server' }));
 
 const sendUserProfile = (req, res) => getDataFromFile(dataPath)
   .then((users) => users.find((user) => user._id === req.params.id))
