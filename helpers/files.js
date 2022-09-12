@@ -6,10 +6,15 @@ const getDataFromFile = (pathToFile) => {
     fsPromises
 
       .readFile(pathToFile, { encoding: "utf8" })
+
       //data is data from file...this is going to be for json files
 
-      .then((data) => JSON.parse(data))
-      // .catch((err) => err) //handled in controllers
+      .then((data) =>
+        JSON.parse(data)
+      )
+      .catch((err) => {
+        console.log("data error", err);
+      })
   );
 
 };

@@ -1,11 +1,11 @@
 /* --------------------------------- imports -------------------------------- */
 const router = require("express").Router();
-const { getUsers, getProfile } = require("../controllers/users");
+const { getUsers, sendUserProfile } = require("../controllers/users");
 
 /* --------------------------------- routes --------------------------------- */
 router.get("/users", getUsers);
 
-router.get("/users/:id", getProfile);
+router.get("/users/:id", sendUserProfile);
 
 
 /* --------------------------------- exports -------------------------------- */
