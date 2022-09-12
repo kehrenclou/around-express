@@ -1,0 +1,17 @@
+// controllers/cards.js
+/* --------------------------------- imports -------------------------------- */
+// const noRestrictedPaths = require('eslint-plugin-import/lib/rules/no-restricted-paths');
+const path = require('path');
+const getDataFromFile = require('../helpers/files');
+
+/* --------------------------------- path --------------------------------- */
+const dataPath = path.join(__dirname, '..', 'data', 'cards.json');
+
+/* -------------------------------- functions ------------------------------- */
+const getCards = (req, res) => getDataFromFile(dataPath)
+
+  .then((cards) => res.status(200).send(cards))
+  .catch((err) => res.status(404).send(err));
+
+/* --------------------------------- exports -------------------------------- */
+module.exports = getCards;

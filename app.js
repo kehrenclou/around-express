@@ -1,17 +1,23 @@
+/* --------------------------------- imports -------------------------------- */
 const express = require("express");
 const path = require("path");
-const usersRouter = require("./routes/users.js");
+const usersRouter = require("./routes/users");
+const cardsRouter = require("./routes/cards");
 
+/* -------------------------- declare app and port -------------------------- */
 const app = express();
 
 const { PORT = 3000 } = process.env;
 
-//to get static file look in public folder
-app.use(express.static(path.join(__dirname, "public"))); //gets stuff from public
+/* -------------------------------- do stuff -------------------------------- */
+app.use(express.static(path.join(__dirname, "public"))); // gets stuff from public
 
-//any other routes that don't match the public folder continue on
-//to here and use the usersRouter
 app.use("/", usersRouter);
+app.use("/cards", cardsRouter);
+
+app.use(function (req, res, next) {
+  res.status(404).send({ message: "Requested resource not found" });
+});
 
 app.listen(PORT, () => {
   console.log(` App listening at port ${PORT}`);
