@@ -9,16 +9,16 @@ const app = express();
 
 const { PORT = 3000 } = process.env;
 
-/* -------------------------------- do stuff -------------------------------- */
-app.use(express.static(path.join(__dirname, "public"))); // gets stuff from public
+/* -------------------------------- app -------------------------------- */
+app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", usersRouter);
 app.use("/cards", cardsRouter);
 
-app.use(function (req, res, next) {
+app.use((req, res) => {
   res.status(404).send({ message: "Requested resource not found" });
 });
 
 app.listen(PORT, () => {
-  console.log(` App listening at port ${PORT}`);
+  // console.log(` App listening at port ${PORT}`);
 });
