@@ -8,19 +8,18 @@ const getDataFromFile = require("../helpers/files");
 const dataPath = path.join(__dirname, "..", "data", "cards.json");
 
 /* -------------------------------- functions ------------------------------- */
-const getCards = (req, res) =>
-console.log('getcards');
-  // getDataFromFile(dataPath)
-  //   .then((cards) => res.status(200).send(cards))
-  //   .catch(() =>
-  //     res.status(500).send({ message: "An error has occurred on the server" })
-  //   );
+const getCards = (req, res) => console.log("getcards");
+// getDataFromFile(dataPath)
+//   .then((cards) => res.status(200).send(cards))
+//   .catch(() =>
+//     res.status(500).send({ message: "An error has occurred on the server" })
+//   );
 
-const createCard = (res, req) => {
-  console.log(req.user._id);
-  const { name, link, owner } = req.body;
+const createCard = (req, res) => {
 
-  Card.create({ name, link, owner:req.user_id})
+  const { name, link } = req.body;
+
+  Card.create({ name, link, owner:req.user._id })
     .then((card) => {
       res.status(200).send({ data: card });
     })

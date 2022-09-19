@@ -1,7 +1,7 @@
 // models/card.js
 /* --------------------------------- imports -------------------------------- */
-const mongoose = require('mongoose');
-const { urlRegExp } = require('../utils/regex');
+const mongoose = require("mongoose");
+const { urlRegExp } = require("../utils/regex");
 
 /* --------------------------------- Schema --------------------------------- */
 const cardSchema = new mongoose.Schema({
@@ -19,20 +19,23 @@ const cardSchema = new mongoose.Schema({
       validator(value) {
         return urlRegExp.test(value);
       },
-      message: 'Please enter a valid url.',
+      message: "Please enter a valid url.",
     },
   },
 
   owner: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'user',
+    ref: "user",
     required: true,
   },
 
-  likes: {
-    type: mongoose.Schema.Types.ObjectId,
-    default: [],
-  },
+  likes: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "user",
+    },
+  ],
+  default: [],
 
   createdAt: {
     type: Date,
@@ -41,4 +44,4 @@ const cardSchema = new mongoose.Schema({
 });
 
 /* ------------------------------ export Model ------------------------------ */
-module.exports = mongoose.model('card', cardSchema);
+module.exports = mongoose.model("card", cardSchema);
