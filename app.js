@@ -19,9 +19,16 @@ mongoose.connect('mongodb://localhost:27017/aroundb');
 app.use(helmet());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
-app.use(express.urlencoded({extended: false}));
+app.use(express.urlencoded({ extended: false }));
 
-app.use('/', usersRouter);
+app.use((req, res, next) => {
+  req.user = {
+    _id: '63288fbe011f1c3bb40a0989',
+  };
+  next();
+});
+
+app.use('/users', usersRouter);
 app.use('/cards', cardsRouter);
 
 app.use((req, res) => {

@@ -1,15 +1,42 @@
 // controllers/cards.js
 /* --------------------------------- imports -------------------------------- */
-const path = require('path');
-const getDataFromFile = require('../helpers/files');
+const path = require("path");
+const Card = require("../models/card");
+const getDataFromFile = require("../helpers/files");
 
 /* --------------------------------- path --------------------------------- */
-const dataPath = path.join(__dirname, '..', 'data', 'cards.json');
+const dataPath = path.join(__dirname, "..", "data", "cards.json");
 
 /* -------------------------------- functions ------------------------------- */
-const getCards = (req, res) => getDataFromFile(dataPath)
-  .then((cards) => res.status(200).send(cards))
-  .catch(() => res.status(500).send({ message: 'An error has occurred on the server' }));
+const getCards = (req, res) =>
+  getDataFromFile(dataPath)
+    .then((cards) => res.status(200).send(cards))
+    .catch(() =>
+      res.status(500).send({ message: "An error has occurred on the server" })
+    );
+
+const createCard = (res, req) => {
+  const { name, link } = req.body;
+
+  Card.create({ name, link })
+    .then((card) => {
+      res.status(200).send({ data: card });
+    })
+
+    .catch((err) => {
+      if (err.name === "ValidationError") {
+        res.status(400).send({
+          message: `${Object.values(err.errors)
+            .map((error) => error.message)
+            .join(", ")}`,
+        });
+      } else {
+        res
+          .status(500)
+          .send({ message: "An error has occurred on the server" });
+      }
+    });
+};
 
 /* --------------------------------- exports -------------------------------- */
-module.exports = getCards;
+module.exports = { getCards, createCard };
