@@ -1,27 +1,25 @@
 // controllers/cards.js
 /* --------------------------------- imports -------------------------------- */
-const path = require("path");
-const Card = require("../models/card");
-const getDataFromFile = require("../helpers/files");
 
-/* --------------------------------- path --------------------------------- */
-const dataPath = path.join(__dirname, "..", "data", "cards.json");
+const Card = require("../models/card");
 
 /* -------------------------------- functions ------------------------------- */
-const getCards = (req, res) => console.log("getcards");
-// getDataFromFile(dataPath)
-//   .then((cards) => res.status(200).send(cards))
-//   .catch(() =>
-//     res.status(500).send({ message: "An error has occurred on the server" })
-//   );
+//get all Cards
+const getCards = (req, res) => {
+  Card.find({})
+    .then((cards) => res.status(200).send(cards))
+    .catch(() =>
+      res.status(500).send({ message: "An error has occurred on the server" })
+    );
+};
 
+//create new Card
 const createCard = (req, res) => {
-
   const { name, link } = req.body;
 
-  Card.create({ name, link, owner:req.user._id })
+  Card.create({ name, link, owner: req.user._id })
     .then((card) => {
-      res.status(200).send({ data: card });
+      res.status(201).send({ data: card });
     })
 
     .catch((err) => {
@@ -32,6 +30,28 @@ const createCard = (req, res) => {
             .join(", ")}`,
         });
       } else {
+        res.status(500).send({ message: "Server unable to create card" });
+      }
+    });
+};
+
+//delete Card
+const deleteCard = (req, res) => {
+  const { cardId } = req.params;
+
+  Card.findByIdAndRemove(cardId)
+    .orFail(() => {
+      const error = new Error("Card id does not exist");
+      error.statusCode = 404;
+      throw error;
+    })
+    .then((card) => res.status(200).send({ data: card }))
+    .catch((err) => {
+      if (err.name === "CastError") {
+        res.status(404).send({
+          message: "Card Id not found",
+        });
+      } else {
         res
           .status(500)
           .send({ message: "An error has occurred on the server" });
@@ -40,4 +60,4 @@ const createCard = (req, res) => {
 };
 
 /* --------------------------------- exports -------------------------------- */
-module.exports = { getCards, createCard };
+module.exports = { getCards, createCard, deleteCard };
