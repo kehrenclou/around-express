@@ -9,16 +9,18 @@ const dataPath = path.join(__dirname, "..", "data", "cards.json");
 
 /* -------------------------------- functions ------------------------------- */
 const getCards = (req, res) =>
-  getDataFromFile(dataPath)
-    .then((cards) => res.status(200).send(cards))
-    .catch(() =>
-      res.status(500).send({ message: "An error has occurred on the server" })
-    );
+console.log('getcards');
+  // getDataFromFile(dataPath)
+  //   .then((cards) => res.status(200).send(cards))
+  //   .catch(() =>
+  //     res.status(500).send({ message: "An error has occurred on the server" })
+  //   );
 
 const createCard = (res, req) => {
-  const { name, link } = req.body;
+  console.log(req.user._id);
+  const { name, link, owner } = req.body;
 
-  Card.create({ name, link })
+  Card.create({ name, link, owner:req.user_id})
     .then((card) => {
       res.status(200).send({ data: card });
     })
