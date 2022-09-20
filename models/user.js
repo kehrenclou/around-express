@@ -13,9 +13,9 @@ const userSchema = new mongoose.Schema({
   },
   about: {
     type: String,
-    required: [true, 'The about field must be filled in'],
+    required: [true, 'The about  field must be filled in'],
     minlength: [2, 'The minimum length of the about field is 2'],
-    maxlength: [30, 'The maximum length of the about field is 30'],
+    maxlength: [30, 'The maximum length of the about  field is 30'],
   },
   avatar: {
     type: String,

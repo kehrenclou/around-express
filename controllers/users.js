@@ -1,67 +1,80 @@
 // controllers/users.js
 /* --------------------------------- imports -------------------------------- */
 
-const User = require("../models/user");
+const User = require('../models/user');
+const {
+  SUCCESSFUL,
+  CREATED,
+  VALIDATION__ERROR,
+  NOT_FOUND,
+  INTERNAL_SERVER_ERROR,
+} = require('../utils/errors');
 
-/* -------------------------------- functions ------------------------------- */
-//get all users
-const getUsers = (req, res) =>
-  User.find({})
-    .then((users) => res.status(200).send(users))
-    .catch(() =>
-      res.status(500).send({ message: "An error has occurred on the server" })
-    );
+/* -------------------------------------------------------------------------- */
+/*                                  functions                                 */
+/* -------------------------------------------------------------------------- */
 
-//get User
+/* ------------------------------ get All Users ----------------------------- */
+const getUsers = (req, res) => User.find({})
+  .then((users) => res.status(SUCCESSFUL).send(users))
+  .catch(() => res
+    .status(INTERNAL_SERVER_ERROR)
+    .send({ message: 'An error has occurred on the server' }));
+
+/* ---------------------------- send User Profile ---------------------------- */
 const sendUserProfile = (req, res) => {
   const { userId } = req.params;
 
   User.findById(userId)
     .orFail(() => {
-      const error = new Error("No user found by that Id");
-      error.statusCode = 404;
+      const error = new Error('No user found by that Id');
+      error.statusCode = NOT_FOUND;
       throw error;
     })
     .then((user) => {
-      res.status(200).send({ data: user });
+      res.status(SUCCESSFUL).send({ data: user });
     })
 
     .catch((err) => {
-      if (err.name === "CastError") {
-        res.status(404).send({
-          message: "User Id not found",
+      if (err.name === 'CastError') {
+        res.status(VALIDATION__ERROR).send({
+          message: 'Invalid User Id',
         });
+      } else if (err.statusCode === NOT_FOUND) {
+        res.status(NOT_FOUND).send({ message: err.message });
       } else {
         res
-          .status(500)
-          .send({ message: "An error has occurred on the server" });
+          .status(INTERNAL_SERVER_ERROR)
+          .send({ message: 'An error has occurred on the server' });
       }
     });
 };
 
-//createUser
+/* ----------------------------- create New User ---------------------------- */
 const createUser = (req, res) => {
   const { name, about, avatar } = req.body;
 
   User.create({ name, about, avatar })
     .then((user) => {
-      res.status(201).send({ data: user });
+      res.status(CREATED).send({ data: user });
     })
 
     .catch((err) => {
-      if (err.name === "ValidationError") {
-        res.status(400).send({
+      if (err.name === 'ValidationError') {
+        res.status(VALIDATION__ERROR).send({
           message: `${Object.values(err.errors)
             .map((error) => error.message)
-            .join(", ")}`,
+            .join(', ')}`,
         });
       } else {
-        res.status(500).send({ message: "Server unable to create user" });
+        res
+          .status(INTERNAL_SERVER_ERROR)
+          .send({ message: 'Server unable to create user' });
       }
     });
 };
 
-//updateUserProfile
+/* --------------------------- update User Profile -------------------------- */
 const updateUserProfile = (req, res) => {
   const userId = req.user._id;
   const { name, about } = req.body;
@@ -69,30 +82,77 @@ const updateUserProfile = (req, res) => {
   User.findByIdAndUpdate(
     userId,
     { name, about },
-    { runValidators: true, new: true }
+    { runValidators: true, new: true },
   )
+    .orFail(() => {
+      const error = new Error('No user found with that Id');
+      error.statusCode = NOT_FOUND;
+      throw error;
+    })
     .then((user) => {
-      res.status(200).send({ data: user });
+      res.status(SUCCESSFUL).send({ data: user });
     })
     .catch((err) => {
-      if (err.name === "CastError") {
-        res.status(400).send({
-          message: `Bad Request ${err}`,
+      if (err.name === 'CastError') {
+        res.status(VALIDATION__ERROR).send({
+          message: 'Invalid User Id',
         });
-      }
-      if (err.name === "ValidationError") {
-        res.status(400).send({
+      } else if (err.name === 'ValidationError') {
+        res.status(VALIDATION__ERROR).send({
           message: `${Object.values(err.errors)
             .map((error) => error.message)
-            .join(", ")}`,
+            .join(', ')}`,
         });
+      } else if (err.statusCode === NOT_FOUND) {
+        res.status(NOT_FOUND).send({ message: err.message });
       } else {
         res
-          .status(500)
+          .status(INTERNAL_SERVER_ERROR)
+          .send({ message: `Server unable to update user ${err}` });
+      }
+    });
+};
+
+/* ------------------------------ update Avatar ----------------------------- */
+const updateUserAvatar = (req, res) => {
+  const userId = req.user._id;
+  const { avatar } = req.body;
+
+  User.findByIdAndUpdate(userId, { avatar }, { runValidators: true, new: true })
+    .orFail(() => {
+      const error = new Error('No user found with that Id');
+      error.statusCode = NOT_FOUND;
+      throw error;
+    })
+    .then((user) => {
+      res.status(SUCCESSFUL).send({ data: user });
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        res.status(VALIDATION__ERROR).send({
+          message: 'Invalid User Id',
+        });
+      } else if (err.name === 'ValidationError') {
+        res.status(VALIDATION__ERROR).send({
+          message: `${Object.values(err.errors)
+            .map((error) => error.message)
+            .join(', ')}`,
+        });
+      } else if (err.statusCode === NOT_FOUND) {
+        res.status(NOT_FOUND).send({ message: err.message });
+      } else {
+        res
+          .status(INTERNAL_SERVER_ERROR)
           .send({ message: `Server unable to update user ${err}` });
       }
     });
 };
 
 /* --------------------------------- exports -------------------------------- */
-module.exports = { getUsers, sendUserProfile, createUser, updateUserProfile };
+module.exports = {
+  getUsers,
+  sendUserProfile,
+  createUser,
+  updateUserProfile,
+  updateUserAvatar,
+};
