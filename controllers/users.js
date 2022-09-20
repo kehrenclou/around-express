@@ -1,25 +1,28 @@
 // controllers/users.js
 /* --------------------------------- imports -------------------------------- */
 
-const User = require('../models/user');
+const User = require("../models/user");
 const {
   SUCCESSFUL,
   CREATED,
   VALIDATION__ERROR,
   NOT_FOUND,
   INTERNAL_SERVER_ERROR,
-} = require('../utils/errors');
+} = require("../utils/errors");
 
 /* -------------------------------------------------------------------------- */
 /*                                  functions                                 */
 /* -------------------------------------------------------------------------- */
 
 /* ------------------------------ get All Users ----------------------------- */
-const getUsers = (req, res) => User.find({})
-  .then((users) => res.status(SUCCESSFUL).send(users))
-  .catch(() => res
-    .status(INTERNAL_SERVER_ERROR)
-    .send({ message: 'An error has occurred on the server' }));
+const getUsers = (req, res) =>
+  User.find({})
+    .then((users) => res.status(SUCCESSFUL).send(users))
+    .catch(() =>
+      res
+        .status(INTERNAL_SERVER_ERROR)
+        .send({ message: "An error has occurred on the server" })
+    );
 
 /* ---------------------------- send User Profile ---------------------------- */
 const sendUserProfile = (req, res) => {
@@ -27,7 +30,7 @@ const sendUserProfile = (req, res) => {
 
   User.findById(userId)
     .orFail(() => {
-      const error = new Error('No user found by that Id');
+      const error = new Error("No user found by that Id");
       error.statusCode = NOT_FOUND;
       throw error;
     })
@@ -36,16 +39,16 @@ const sendUserProfile = (req, res) => {
     })
 
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.name === "CastError") {
         res.status(VALIDATION__ERROR).send({
-          message: 'Invalid User Id',
+          message: "Invalid User Id",
         });
       } else if (err.statusCode === NOT_FOUND) {
         res.status(NOT_FOUND).send({ message: err.message });
       } else {
         res
           .status(INTERNAL_SERVER_ERROR)
-          .send({ message: 'An error has occurred on the server' });
+          .send({ message: "An error has occurred on the server" });
       }
     });
 };
@@ -60,16 +63,16 @@ const createUser = (req, res) => {
     })
 
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.name === "ValidationError") {
         res.status(VALIDATION__ERROR).send({
           message: `${Object.values(err.errors)
             .map((error) => error.message)
-            .join(', ')}`,
+            .join(", ")}`,
         });
       } else {
         res
           .status(INTERNAL_SERVER_ERROR)
-          .send({ message: 'Server unable to create user' });
+          .send({ message: "Server unable to create user" });
       }
     });
 };
@@ -82,10 +85,10 @@ const updateUserProfile = (req, res) => {
   User.findByIdAndUpdate(
     userId,
     { name, about },
-    { runValidators: true, new: true },
+    { runValidators: true, new: true }
   )
     .orFail(() => {
-      const error = new Error('No user found with that Id');
+      const error = new Error("No user found with that Id");
       error.statusCode = NOT_FOUND;
       throw error;
     })
@@ -93,15 +96,15 @@ const updateUserProfile = (req, res) => {
       res.status(SUCCESSFUL).send({ data: user });
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.name === "CastError") {
         res.status(VALIDATION__ERROR).send({
-          message: 'Invalid User Id',
+          message: "Invalid User Id",
         });
-      } else if (err.name === 'ValidationError') {
+      } else if (err.name === "ValidationError") {
         res.status(VALIDATION__ERROR).send({
           message: `${Object.values(err.errors)
             .map((error) => error.message)
-            .join(', ')}`,
+            .join(", ")}`,
         });
       } else if (err.statusCode === NOT_FOUND) {
         res.status(NOT_FOUND).send({ message: err.message });
@@ -120,7 +123,7 @@ const updateUserAvatar = (req, res) => {
 
   User.findByIdAndUpdate(userId, { avatar }, { runValidators: true, new: true })
     .orFail(() => {
-      const error = new Error('No user found with that Id');
+      const error = new Error("No user found with that Id");
       error.statusCode = NOT_FOUND;
       throw error;
     })
@@ -128,15 +131,15 @@ const updateUserAvatar = (req, res) => {
       res.status(SUCCESSFUL).send({ data: user });
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
+      if (err.name === "CastError") {
         res.status(VALIDATION__ERROR).send({
-          message: 'Invalid User Id',
+          message: "Invalid User Id",
         });
-      } else if (err.name === 'ValidationError') {
+      } else if (err.name === "ValidationError") {
         res.status(VALIDATION__ERROR).send({
           message: `${Object.values(err.errors)
             .map((error) => error.message)
-            .join(', ')}`,
+            .join(", ")}`,
         });
       } else if (err.statusCode === NOT_FOUND) {
         res.status(NOT_FOUND).send({ message: err.message });
