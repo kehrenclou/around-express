@@ -16,6 +16,9 @@ const {
 
 /* ------------------------------ get All Users ----------------------------- */
 const getUsers = (req, res) => User.find({})
+  .orFail(() => {
+    res.status(200).send({ message: 'orFail' });
+  })
   .then((users) => res.status(SUCCESSFUL).send(users))
   .catch(() => res
     .status(INTERNAL_SERVER_ERROR)
